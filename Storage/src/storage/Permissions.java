@@ -5,4 +5,5 @@ public enum Permissions {
 	download,
 	delete,
 	preview,
+	create,
 }

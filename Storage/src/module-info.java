@@ -1,2 +1,3 @@
 module Storage {
+	requires gson;
 }
