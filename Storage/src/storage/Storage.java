@@ -9,9 +9,9 @@ import com.google.gson.JsonObject;
 
 
 
-public final class Storage {
+public final class Storage implements IStorage{
 	private User connectedUser;
-	private static final String  StoragePath="C:\\Users\\38160\\Desktop\\Storage";
+	public static final String  StoragePath="C:\\Users\\38160\\Desktop\\Storage";
 	private static Storage instance;
 	private ArrayList<User> users = new ArrayList<User>();
 
@@ -109,4 +109,46 @@ public final class Storage {
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
 	}
+
+	@Override
+	public void create(String path, byte maxSize, int maxFolders) {
+		String name ="file";
+		for(int i = 0; i < maxFolders; i++) {
+			
+			//Instantiate the File class   
+            File storage = new File(StoragePath+"\\"+name+i);  
+            //Creating a folder using mkdir() method  
+            boolean bool = storage.mkdir();  
+            if(bool){  
+               System.out.println("folder "+name+i+" je uspesno kreiran!");  
+            }else{  
+               System.out.println("Greska pri kreiranju foldera "+name);  
+            }
+		}
+		
+	}
+
+	@Override
+	public void delete(String path) {
+
+		File f = new File(path);
+		if(f.delete()) {
+			System.out.println("Folder je izbrisan");
+		}else {
+			System.out.println("Folder nije izbrisan");
+		}
+	}
+
+	@Override
+	public void preview() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void transfer() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

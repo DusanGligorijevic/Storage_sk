@@ -7,6 +7,7 @@ public class Main {
 	private static String username, password;
 
 	public static void main(String[] args) {
+		
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Kreiranje SuperAdmina..");
 		System.out.println("Unesite username: ");
@@ -29,6 +30,10 @@ public class Main {
 		Storage.getInstance().connect(user);
 		Storage.getInstance().JSONSave(Storage.getInstance().getUsers());
 		
+		Storage.getInstance().create(Storage.getInstance().StoragePath, (byte) 100, 10);
+	
+		
+		//Storage.getInstance().delete(Storage.getInstance().StoragePath+"\\file0");
 	}
 
 }
