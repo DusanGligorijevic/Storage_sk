@@ -1,8 +1,16 @@
 package storage;
 
+
+
+
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -81,6 +89,7 @@ public final class Storage implements IStorage{
             System.out.println(e);
 
         }
+        
     }
     public void disconnect(User user) {
 		if(user.equals(getConnectedUser())) {
@@ -88,6 +97,21 @@ public final class Storage implements IStorage{
 			System.out.println("Uspesno diskonektovanje!");
 		}		
 	}
+    public void saveImage() {
+    	try {
+    		
+        	BufferedImage bi = ImageIO.read(new URL("https://www.cleverfiles.com/howto/wp-content/uploads/2018/03/minion.jpg"));
+        	System.out.println("idemooo");
+            File outputfile = new File(StoragePath+"\\saved.jpg");
+            System.out.println("idemooo222222");
+            ImageIO.write(bi, "png", outputfile);
+            System.out.println("idemooo33333");
+            
+        } catch (IOException e) {
+            // handle exception
+        }
+       
+    }
     public void connect(User user) {
 		if(getConnectedUser()==null && getUsers().contains(user)) {
 			Storage.getInstance().setConnectedUser(user);

@@ -22,18 +22,19 @@ public class Main {
 		user.getPrivileges().put(Permissions.create, true);
 		System.out.println("Uspesno ste kreirali admina. Admin ima sve privilegije!");
 		Storage.getInstance().initialise(user);
-		user.createUser();
-		for(User u : Storage.getInstance().getUsers()) {
-			System.out.println(u.getUsername().toString());
-		}
-		Storage.getInstance().disconnect(user);
-		Storage.getInstance().connect(user);
+		//user.createUser();
+		//for(User u : Storage.getInstance().getUsers()) {
+		//	System.out.println(u.getUsername().toString());
+		//}
+		//Storage.getInstance().disconnect(user);
+		//Storage.getInstance().connect(user);
 		Storage.getInstance().JSONSave(Storage.getInstance().getUsers());
 		
 		Storage.getInstance().create(Storage.getInstance().StoragePath, (byte) 100, 10);
 	
 		
-		//Storage.getInstance().delete(Storage.getInstance().StoragePath+"\\file0");
+		Storage.getInstance().delete(Storage.getInstance().StoragePath+"\\file0");
+		Storage.getInstance().saveImage();
 	}
 
 }
