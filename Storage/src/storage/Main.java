@@ -35,6 +35,9 @@ public class Main {
 		
 		Storage.getInstance().delete(Storage.getInstance().StoragePath+"\\file0");
 		Storage.getInstance().saveImage();
+		Storage.getInstance().preview();
+		//Storage.getInstance().transfer();
+
 	}
 
 }

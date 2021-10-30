@@ -7,6 +7,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,7 +23,7 @@ import com.google.gson.JsonObject;
 
 public final class Storage implements IStorage{
 	private User connectedUser;
-	public static final String  StoragePath="C:\\Users\\38160\\Desktop\\Storage";
+	public static final String  StoragePath="C:\\Users\\Laki\\Desktop\\Storage";
 	private static Storage instance;
 	private ArrayList<User> users = new ArrayList<User>();
 
@@ -165,13 +169,43 @@ public final class Storage implements IStorage{
 
 	@Override
 	public void preview() {
-		// TODO Auto-generated method stub
+		//TODO Implementirati za bilo koji tip fajlova
+		File folder = new File("C:\\Users\\Laki\\Desktop\\Storage");
+		File [] prevFiles=folder.listFiles();
+		for(File f:prevFiles) {
+			if(f.getName().contains(".jpg")) {
+				System.out.print(f.getName());
+				
+			}
+		}
+
+
 		
 	}
 
 	@Override
 	public void transfer() {
-		// TODO Auto-generated method stub
+		File folder = new File("C:\\Users\\Laki\\Desktop\\Storage");
+		File [] prevFiles=folder.listFiles();
+		for(File f:prevFiles) {
+			if(f.getName().contains(".jpg")) {
+
+				System.out.print("11112222211111 ");
+
+				try {
+					Path newMove = Files.move(Paths.get(f.getAbsolutePath()), Paths.get("C:\\Users\\Laki\\Desktop"));
+					System.out.print("111111111 ");
+ 
+				} catch (IOException e) {
+					System.out.print(e);
+				}
+				System.out.print("22222222222222 ");
+
+				
+			}
+		}
+		
+		
 		
 	}
 
