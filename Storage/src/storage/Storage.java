@@ -26,6 +26,7 @@ public final class Storage implements IStorage{
 	public static final String  StoragePath="C:\\Users\\Laki\\Desktop\\Storage";
 	private static Storage instance;
 	private ArrayList<User> users = new ArrayList<User>();
+	private ArrayList<String> extensions=new ArrayList<String>();
 
 	//singleton
     private Storage() {
@@ -172,9 +173,10 @@ public final class Storage implements IStorage{
 		//TODO Implementirati za bilo koji tip fajlova
 		File folder = new File("C:\\Users\\Laki\\Desktop\\Storage");
 		File [] prevFiles=folder.listFiles();
+		System.out.println("Trazeni fajlovi:");
 		for(File f:prevFiles) {
 			if(f.getName().contains(".jpg")) {
-				System.out.print(f.getName());
+				System.out.println(f.getName());
 				
 			}
 		}
