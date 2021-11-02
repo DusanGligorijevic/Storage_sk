@@ -17,12 +17,15 @@ public class User {
 		this.password = password;
 		this.privileges = new HashMap<Permissions, Boolean>();
 	}
+	
 	public void createUser() {
+		/*
 		if(!Storage.getInstance().getConnectedUser().getPrivileges().get(Permissions.create)) {
 			System.out.println("Nije ulogovan admin. Korisnik "+ Storage.getInstance().getConnectedUser()+
-					" nema dozvolu da kreira druge korisnike!");
+				" nema dozvolu da kreira druge korisnike!");
 			return;
 		}
+		*/
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Unesite username novog korisnika: ");
 		String username = sc.next();
@@ -73,7 +76,7 @@ public class User {
 				break;
 			}
 		}
-		Storage.getInstance().addUser(user);
+		//Storage.getInstance().addUser(user);
 		System.out.println("Uspesno ste dodali korisnika!");
 		
 	}

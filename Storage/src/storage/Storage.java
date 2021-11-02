@@ -7,40 +7,95 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.awt.image.BufferedImage;
 
 
-public final class Storage implements IStorage{
+
+
+
+public abstract class Storage{
 	private User connectedUser;
-	public static final String  StoragePath="C:\\Users\\Laki\\Desktop\\Storage";
-	private static Storage instance;
+	public static final String  StoragePath="C:\\Users\\38160\\Desktop\\Storage";
+
 	private ArrayList<User> users = new ArrayList<User>();
 	private ArrayList<String> extensions=new ArrayList<String>();
 
-	//singleton
-    private Storage() {
-    }
 
-    public static Storage getInstance() {
-        if (instance == null) {
-            instance = new Storage();
-        }
-        return instance;
-    }
-    public void initialise(User user) {
+    public Storage() {
     	
-    	System.out.println("Korisnik "+ user.getUsername().toString() +" pokusava da kreira skladiste...");
+    }
+    public abstract void create(String path, int maxFolders);
+    public abstract void delete();
+    public abstract void transfer(File f);
+    public abstract void preview(File f);
+    
+    
+    public void create(String path, int maxSize, int maxFolders) {
+    	
+ 
+		create(path,maxFolders);
+	}
+
+
+	public void delete(String path) {
+
+		File f = new File(path);
+		if(f.delete()) {
+			System.out.println("Folder je izbrisan");
+		}else {
+			System.out.println("Folder nije izbrisan");
+		}
+	}
+
+
+	public void preview() {
+		//TODO Implementirati za bilo koji tip fajlova
+		File folder = new File("C:\\Users\\38160\\Desktop\\Storage");
+		File [] prevFiles=folder.listFiles();
+		System.out.println("Trazeni fajlovi:");
+		for(File f:prevFiles) {
+			if(f.getName().contains(".jpg")) {
+				System.out.println(f.getName());
+				
+			}
+		}
+
+
+		
+	}
+
+
+	public void transfer() {
+		File folder = new File("C:\\Users\\38160\\Desktop\\Storage");
+		File [] prevFiles=folder.listFiles();
+		for(File f:prevFiles) {
+				File source = new File("C:\\Users\\38160\\Desktop\\Storage\\saved.jpg");
+				if(source.exists()) {
+					File dest = new File("C:\\\\Users\\\\38160\\\\Desktop\\idegas.jpg");
+					try {
+						Files.copy(source.toPath(), dest.toPath(),StandardCopyOption.REPLACE_EXISTING);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else
+					System.out.println("Ne postoji folder!");	
+		}	
+	}
+
+       public void initialise(User user) {
+    	
+    	System.out.println("Korisnik" + user + "  pokusava da kreira skladiste...");
     	/*
     	if(!user.getPassword().contentEquals("pass")) {
     		System.out.println("Netacna lozinka!");
@@ -59,10 +114,10 @@ public final class Storage implements IStorage{
                System.out.println("Greska pri kreiranju skladista!");  
             }  
     	}else
-    		System.out.println("Korisnik nema dozvolu da kreira skladiste!");
+    	System.out.println("Korisnik nema dozvolu da kreira skladiste!");
     	
-    	setConnectedUser(user);
-    	addUser(user);
+    
+    	
     	System.out.println("Uspesno logovanje!");
   
     }
@@ -71,6 +126,7 @@ public final class Storage implements IStorage{
     	getUsers().add(user);
     	
     }
+    
     public void JSONSave(ArrayList<User> users) {
         JsonArray jsonArray = new JsonArray();
         for (int i = 0;i < getUsers().size() ; i++) {
@@ -96,9 +152,10 @@ public final class Storage implements IStorage{
         }
         
     }
+    
     public void disconnect(User user) {
 		if(user.equals(getConnectedUser())) {
-			Storage.getInstance().setConnectedUser(null);
+			setConnectedUser(null);
 			System.out.println("Uspesno diskonektovanje!");
 		}		
 	}
@@ -119,7 +176,7 @@ public final class Storage implements IStorage{
     }
     public void connect(User user) {
 		if(getConnectedUser()==null && getUsers().contains(user)) {
-			Storage.getInstance().setConnectedUser(user);
+			setConnectedUser(user);
 			System.out.println("Korisnik "+ user.getUsername() + " je konektovan!");
 		}		
 	}
@@ -137,78 +194,6 @@ public final class Storage implements IStorage{
 
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
-	}
-
-	@Override
-	public void create(String path, byte maxSize, int maxFolders) {
-		String name ="file";
-		for(int i = 0; i < maxFolders; i++) {
-			
-			//Instantiate the File class   
-            File storage = new File(StoragePath+"\\"+name+i);  
-            //Creating a folder using mkdir() method  
-            boolean bool = storage.mkdir();  
-            if(bool){  
-               System.out.println("folder "+name+i+" je uspesno kreiran!");  
-            }else{  
-               System.out.println("Greska pri kreiranju foldera "+name);  
-            }
-		}
-		
-	}
-
-	@Override
-	public void delete(String path) {
-
-		File f = new File(path);
-		if(f.delete()) {
-			System.out.println("Folder je izbrisan");
-		}else {
-			System.out.println("Folder nije izbrisan");
-		}
-	}
-
-	@Override
-	public void preview() {
-		//TODO Implementirati za bilo koji tip fajlova
-		File folder = new File("C:\\Users\\Laki\\Desktop\\Storage");
-		File [] prevFiles=folder.listFiles();
-		System.out.println("Trazeni fajlovi:");
-		for(File f:prevFiles) {
-			if(f.getName().contains(".jpg")) {
-				System.out.println(f.getName());
-				
-			}
-		}
-
-
-		
-	}
-
-	@Override
-	public void transfer() {
-		File folder = new File("C:\\Users\\Laki\\Desktop\\Storage");
-		File [] prevFiles=folder.listFiles();
-		for(File f:prevFiles) {
-			if(f.getName().contains(".jpg")) {
-
-				System.out.print("11112222211111 ");
-
-				try {
-					Path newMove = Files.move(Paths.get(f.getAbsolutePath()), Paths.get("C:\\Users\\Laki\\Desktop"));
-					System.out.print("111111111 ");
- 
-				} catch (IOException e) {
-					System.out.print(e);
-				}
-				System.out.print("22222222222222 ");
-
-				
-			}
-		}
-		
-		
-		
 	}
 
 }
