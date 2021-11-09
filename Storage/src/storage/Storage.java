@@ -36,44 +36,13 @@ public abstract class Storage{
     	
     }
     public abstract void create(String path, int maxFolders);
-    public abstract void delete();
-    public abstract void transfer(File f);
+    public abstract void delete(String path);
+    public abstract void transfer(String location,String destination,String file);
+    public abstract void preview(File f,String s);
     public abstract void preview(File f);
+    public abstract void preview(File f,boolean directoriesOnly);
+
     
-    
-    public void create(String path, int maxSize, int maxFolders) {
-    	
- 
-		create(path,maxFolders);
-	}
-
-
-	public void delete(String path) {
-
-		File f = new File(path);
-		if(f.delete()) {
-			System.out.println("Folder je izbrisan");
-		}else {
-			System.out.println("Folder nije izbrisan");
-		}
-	}
-
-
-	public void preview() {
-		//TODO Implementirati za bilo koji tip fajlova
-		File folder = new File("C:\\Users\\38160\\Desktop\\Storage");
-		File [] prevFiles=folder.listFiles();
-		System.out.println("Trazeni fajlovi:");
-		for(File f:prevFiles) {
-			if(f.getName().contains(".jpg")) {
-				System.out.println(f.getName());
-				
-			}
-		}
-
-
-		
-	}
 
 
 	public void transfer() {
