@@ -41,26 +41,9 @@ public abstract class Storage{
     public abstract void preview(File f,String s);
     public abstract void preview(File f);
     public abstract void preview(File f,boolean directoriesOnly);
+    public abstract void preview();
 
     
-
-
-	public void transfer() {
-		File folder = new File("C:\\Users\\38160\\Desktop\\Storage");
-		File [] prevFiles=folder.listFiles();
-		for(File f:prevFiles) {
-				File source = new File("C:\\Users\\38160\\Desktop\\Storage\\saved.jpg");
-				if(source.exists()) {
-					File dest = new File("C:\\\\Users\\\\38160\\\\Desktop\\idegas.jpg");
-					try {
-						Files.copy(source.toPath(), dest.toPath(),StandardCopyOption.REPLACE_EXISTING);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}else
-					System.out.println("Ne postoji folder!");	
-		}	
-	}
 
        public void initialise(User user) {
     	
@@ -79,18 +62,26 @@ public abstract class Storage{
             boolean bool = storage.mkdir();  
             if(bool){  
                System.out.println("Skladiste je uspesno kreirano!");  
+               createConfigFile(user);
             }else{  
                System.out.println("Greska pri kreiranju skladista!");  
             }  
     	}else
     	System.out.println("Korisnik nema dozvolu da kreira skladiste!");
     	
+  
     
     	
     	System.out.println("Uspesno logovanje!");
   
     }
-	
+	public void createConfigFile(User user) {
+		Config config = new Config (this,user);
+		config.setNumberOfFiles(10);
+		config.setSize((byte)3000000);
+		JSONSaveConfig(config);
+		
+	}
     public void addUser(User user) {
     	getUsers().add(user);
     	
@@ -110,11 +101,24 @@ public abstract class Storage{
             obj.add("User"+i, objItem);
             jsonArray.add(obj);
         }
+    }
         
-        try (FileWriter file = new FileWriter(StoragePath+"\\Users.json")) {
+        public void JSONSaveConfig(Config config) {
+            JsonArray jsonArray = new JsonArray();
+           
+                JsonObject obj = new JsonObject();
+                JsonObject objItem =  new JsonObject();
+                objItem.addProperty("size", config.getSize());
+                objItem.addProperty("numberOfFiles",  config.getNumberOfFiles());
+                objItem.addProperty("Admin",  config.getUser().toString());
+                objItem.addProperty("Storage",  config.getStrage().toString());
+                obj.add("User", objItem);
+                jsonArray.add(obj);
+        
+        try (FileWriter file = new FileWriter(StoragePath+"\\Config.json")) {
             file.write(jsonArray.toString());
-            System.out.println("Successfully Copied JSON Object to File...");
-            System.out.println("\nJSON Object: " + jsonArray);
+            System.out.println("Successfully Copied JSON Object Config to File...");
+            System.out.println("\nJSON Object config: " + jsonArray);
         } catch(Exception e){
             System.out.println(e);
 
