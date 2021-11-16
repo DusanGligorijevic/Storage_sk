@@ -30,6 +30,7 @@ public abstract class Storage{
 
 	private ArrayList<User> users = new ArrayList<User>();
 	private ArrayList<String> extensions=new ArrayList<String>();
+	private Config cfg;
 
 
     public Storage() {
@@ -79,21 +80,25 @@ public abstract class Storage{
 		Config config = new Config (this,user);
 		config.setNumberOfFiles(10);
 		config.setSize((byte)3000000);
+		config.setStrage(this);
 		JSONSaveConfig(config);
+		this.cfg=config;
 		
 	}
 	public void setMaxSize(Config c,int size) {
-		if(this.getSize()>byte(size)) {
-			System.out.println("Velicina skladista vec prevazilazi zadaru!");
+		File f=new File(StoragePath);
+		if(f.getTotalSpace()>(byte)size) {
+			System.out.println("Velicina skladista vec prevazilazi zadatu!");
 		}else {
-			c.setSize(byte(size());
+			c.setSize((byte)size);
 		}
 	}
 	public void maxSizeLimit(Config c,int size) {
-		if(this.getSize()>byte(size)) {
+		File f=new File(StoragePath);
+		if(f.getTotalSpace()>(byte)size) {
 			System.out.println("Velicina skladista vec prevazilazi zadatu!");
 		}else {
-			c.setSize(byte(size());
+			c.setSize((byte)size);
 		}
 	}
 	public void extensionLimit(String s) {
@@ -105,11 +110,11 @@ public abstract class Storage{
 	public void fileAmountLimit(Config cnf,int num) {
 		File f=new File(StoragePath);
 		File [] prevFiles=f.listFiles();
-		cnt=0;
+		int cnt=0;
 		for(File file:prevFiles) {
-			c++
+			cnt++;
 		}
-		if(c>num) {
+		if(cnt>num) {
 			System.out.println("Broj fajlova vec prevazilazi zadati!");
 
 		}else {
