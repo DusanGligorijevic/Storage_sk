@@ -82,6 +82,42 @@ public abstract class Storage{
 		JSONSaveConfig(config);
 		
 	}
+	public void setMaxSize(Config c,int size) {
+		if(this.getSize()>byte(size)) {
+			System.out.println("Velicina skladista vec prevazilazi zadaru!");
+		}else {
+			c.setSize(byte(size());
+		}
+	}
+	public void maxSizeLimit(Config c,int size) {
+		if(this.getSize()>byte(size)) {
+			System.out.println("Velicina skladista vec prevazilazi zadatu!");
+		}else {
+			c.setSize(byte(size());
+		}
+	}
+	public void extensionLimit(String s) {
+		//TO-DO napraviti listu i u konfig fajlu
+		extensions.add(s);
+		System.out.println("Fajlovi sa "+s+"ekstenzijom vise ne mogu biti dodavani!");
+		
+	}
+	public void fileAmountLimit(Config cnf,int num) {
+		File f=new File(StoragePath);
+		File [] prevFiles=f.listFiles();
+		cnt=0;
+		for(File file:prevFiles) {
+			c++
+		}
+		if(c>num) {
+			System.out.println("Broj fajlova vec prevazilazi zadati!");
+
+		}else {
+			cnf.setNumberOfFiles(num);
+		}
+		
+	}
+	
     public void addUser(User user) {
     	getUsers().add(user);
     	
