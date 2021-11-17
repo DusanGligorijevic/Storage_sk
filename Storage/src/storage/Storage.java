@@ -36,11 +36,56 @@ public abstract class Storage{
     public Storage() {
     	
     }
+    /**
+     * Ova metoda se koristi za kreiranje skladista.
+     * 
+     * @param path Lokacija na koju ce skladiste biti smesteno
+     * @param maxFolders  
+     * @return void
+     */
     public abstract void create(String path, int maxFolders);
+    /**
+     * Ova metoda brise skladiste na datoj putanji.
+     * 
+     * @param path Putanja do skladista
+     * @return void
+     */
     public abstract void delete(String path);
+    /**
+     * Ova metoda premesta skladiste sa jedne
+     * lokacije na drugu
+     * 
+     * @param location Trenutna lokacija fajla
+     * @param destination Lokacija na koju ce fajl biti smesten
+     * @param file Fajl koji se premesta
+     * @return void
+     */
     public abstract void transfer(String location,String destination,String file);
+    /**
+     * Ova metoda se koristi za prikazivanje svih
+     * fajlova odredjenog tipa u nekom skladistu
+     * 
+     * @param f Skladiste
+     * @param s tip ekstenzije  
+     * @return void
+     */
     public abstract void preview(File f,String s);
+    /**
+     * Ova metoda se koristi za prikazivanje svih
+     * fajlova u nekom skladistu
+     * 
+     * @param f Skladiste
+     * @return void
+     */
     public abstract void preview(File f);
+    /**
+     * Ova metoda se koristi za prikazivanje svih
+     * fajlova koji jesu ili nisu direktorijum,
+     * nekom skladistu
+     * 
+     * @param f Skladiste
+     * @return directoriesOnly Da li se trazi skladiste ili ne
+     */
     public abstract void preview(File f,boolean directoriesOnly);
     public abstract void preview();
 
@@ -76,6 +121,7 @@ public abstract class Storage{
     	System.out.println("Uspesno logovanje!");
   
     }
+
 	public void createConfigFile(User user) {
 		Config config = new Config (this,user);
 		config.setNumberOfFiles(10);
@@ -85,6 +131,13 @@ public abstract class Storage{
 		this.cfg=config;
 		
 	}
+    /**
+     * Ova metoda se koristi za postavljanje
+     * maksimalne velicine skladista u njegovoj konfiguraciji.
+     * 
+     * @param size Nova velicina skladista
+     * @return void
+     */
 	public void setMaxSize(Config c,int size) {
 		File f=new File(StoragePath);
 		if(f.getTotalSpace()>(byte)size) {
@@ -93,6 +146,7 @@ public abstract class Storage{
 			c.setSize((byte)size);
 		}
 	}
+	
 	public void maxSizeLimit(Config c,int size) {
 		File f=new File(StoragePath);
 		if(f.getTotalSpace()>(byte)size) {
@@ -101,12 +155,26 @@ public abstract class Storage{
 			c.setSize((byte)size);
 		}
 	}
+    /**
+     * Ova metoda se koristi za zabranu dodavanja novih
+     * fajlova nekog tipa.Postavlja se u konfiguraciji 
+     * skladista.
+     * @param s ekstenzija
+     * @return void
+     */
 	public void extensionLimit(String s) {
 		//TO-DO napraviti listu i u konfig fajlu
 		extensions.add(s);
 		System.out.println("Fajlovi sa "+s+"ekstenzijom vise ne mogu biti dodavani!");
 		
 	}
+    /**
+     * Ovam metodom se postavlja maksimalni broj fajlova koji se 
+     * mogu dodati u neko skladiste.
+     * 
+     * @param num Novi maksimalni broj fajlova
+     * @return void
+     */
 	public void fileAmountLimit(Config cnf,int num) {
 		File f=new File(StoragePath);
 		File [] prevFiles=f.listFiles();
@@ -122,7 +190,12 @@ public abstract class Storage{
 		}
 		
 	}
-	
+    /**
+     * Metoda koja se koristi za dodavanje korisnika u skladiste.
+     * 
+     * @param user Kosrisnik koji se dodaje
+     * @return void
+     */
     public void addUser(User user) {
     	getUsers().add(user);
     	
@@ -166,13 +239,21 @@ public abstract class Storage{
         }
         
     }
-    
+        /**
+         * Metoda kojom se korisnik diskonektuje
+         * se skladista.
+         * 
+         * @param user Korisnik
+         * @return void
+         */
     public void disconnect(User user) {
 		if(user.equals(getConnectedUser())) {
 			setConnectedUser(null);
 			System.out.println("Uspesno diskonektovanje!");
 		}		
 	}
+    
+    
     public void saveImage() {
     	try {
     		
@@ -188,6 +269,13 @@ public abstract class Storage{
         }
        
     }
+    /**
+     * Ova metoda se koristi za povezivanje 
+     * korisnika sa skladistem.
+     * 
+     * @param user Korisnik koji se povezuje
+     * @return void
+     */
     public void connect(User user) {
 		if(getConnectedUser()==null && getUsers().contains(user)) {
 			setConnectedUser(user);
