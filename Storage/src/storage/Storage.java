@@ -13,6 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.imageio.ImageIO;
 
 import com.google.gson.JsonArray;
@@ -40,10 +42,16 @@ public abstract class Storage{
      * Ova metoda se koristi za kreiranje skladista.
      * 
      * @param path Lokacija na koju ce skladiste biti smesteno
-     * @param maxFolders  
+     * @param numberOfFiles 
      * @return void
      */
-    public abstract void create(String path, int maxFolders);
+    public abstract void createFiles(String path, String name, int numberOfFiles);
+    
+    public void createFile(String path, String name) {
+    	createFiles(path, name, 1);
+    }
+    
+ 
     /**
      * Ova metoda brise skladiste na datoj putanji.
      * 
@@ -51,6 +59,8 @@ public abstract class Storage{
      * @return void
      */
     public abstract void delete(String path);
+    
+    
     /**
      * Ova metoda premesta skladiste sa jedne
      * lokacije na drugu
@@ -61,6 +71,9 @@ public abstract class Storage{
      * @return void
      */
     public abstract void transfer(String location,String destination,String file);
+    
+    
+    
     /**
      * Ova metoda se koristi za prikazivanje svih
      * fajlova odredjenog tipa u nekom skladistu
@@ -69,7 +82,9 @@ public abstract class Storage{
      * @param s tip ekstenzije  
      * @return void
      */
-    public abstract void preview(File f,String s);
+    public abstract void previewExt(String path, String extension);
+    
+    
     /**
      * Ova metoda se koristi za prikazivanje svih
      * fajlova u nekom skladistu
@@ -77,7 +92,8 @@ public abstract class Storage{
      * @param f Skladiste
      * @return void
      */
-    public abstract void preview(File f);
+    public abstract void previewAll(String path);
+    
     /**
      * Ova metoda se koristi za prikazivanje svih
      * fajlova koji jesu ili nisu direktorijum,
@@ -86,20 +102,42 @@ public abstract class Storage{
      * @param f Skladiste
      * @return directoriesOnly Da li se trazi skladiste ili ne
      */
-    public abstract void preview(File f,boolean directoriesOnly);
-    public abstract void preview();
-
+    public abstract void previewDir(String path);
     
+    public abstract void preview();
+    
+    /**
+     * Ova metoda se koristi za skidanje
+     * fajla ili direktorijuma, sa
+     * nekog skladista
+     * 
+     * @param putanja do fajla ili direktorijuma
+     * @return void
+     */
+    public abstract void download(String path);
+    
+    
+    
+    /**
+     * Ova metoda se koristi za kreiranje
+     * foldera na nekoj putanji.
+     * 
+     * @param putanja
+     * @return void
+     */
+    public abstract void createFolders(String path, String name, String number);
+    
+ 
+    public void createFolder(String path, String name) {
+    	createFolders(path, name, "1");
+    	
+    }
+   // public abstract <T> List<T> findAll(String collection, Class<T> type);
 
        public void initialise(User user) {
     	
     	System.out.println("Korisnik" + user + "  pokusava da kreira skladiste...");
-    	/*
-    	if(!user.getPassword().contentEquals("pass")) {
-    		System.out.println("Netacna lozinka!");
-    		return;
-    	}
-    	*/
+    	
     	if(user.getPrivileges().get(Permissions.create)) {
     		
     		//Instantiate the File class   
@@ -114,9 +152,6 @@ public abstract class Storage{
             }  
     	}else
     	System.out.println("Korisnik nema dozvolu da kreira skladiste!");
-    	
-  
-    
     	
     	System.out.println("Uspesno logovanje!");
   
