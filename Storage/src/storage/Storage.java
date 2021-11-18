@@ -104,7 +104,7 @@ public abstract class Storage{
      */
     public abstract void previewDir(String path);
     
-    public abstract void preview();
+  
     
     /**
      * Ova metoda se koristi za skidanje
