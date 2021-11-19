@@ -43,6 +43,7 @@ public abstract class Storage{
      * Ova metoda se koristi za kreiranje skladista.
      * 
      * @param path Lokacija na koju ce skladiste biti smesteno
+     * 
      * @param numberOfFiles 
      * @return void
      */
@@ -68,8 +69,8 @@ public abstract class Storage{
     
     
     /**
-     * Ova metoda premesta skladiste sa jedne
-     * lokacije na drugu
+     * Ova metoda premesta fajl sa jedne
+     * lokacije u skladistu na drugu
      * 
      * @param location Trenutna lokacija fajla
      * @param destination Lokacija na koju ce fajl biti smesten
@@ -84,8 +85,8 @@ public abstract class Storage{
      * Ova metoda se koristi za prikazivanje svih
      * fajlova odredjenog tipa u nekom skladistu
      * 
-     * @param f Skladiste
-     * @param s tip ekstenzije  
+     * @param path Skladiste
+     * @param extension tip ekstenzije  
      * @return void
      */
     public abstract void previewExt(String path, String extension);
@@ -95,29 +96,46 @@ public abstract class Storage{
      * Ova metoda se koristi za prikazivanje svih
      * fajlova u nekom skladistu
      * 
-     * @param f Skladiste
+     * @param path Skladiste
      * @return void
      */
     public abstract void previewAll(String path);
     
     /**
      * Ova metoda se koristi za prikazivanje svih
-     * fajlova koji jesu ili nisu direktorijum,
+     * fajlova koji jesu ili nisu direktorijum u
      * nekom skladistu
      * 
-     * @param f Skladiste
+     * @param path Skladiste
      * @return directoriesOnly Da li se trazi skladiste ili ne
      */
     public abstract void previewDir(String path);
+    /**
+     * Ova metoda se koristi za prikazivanje svih
+     * fajlova u nekom skladistu u sortiranom formatu.
+     * 
+     * @param path Skladiste 
+     * @return void
+     */
+    public abstract void previewSorted(String path); 
     
-  
+    /**
+     * Ova metoda se koristi za prikazivanje 
+     * fajla odredjenog naziva u skladistu,ukoliko ne postoji
+     * korisnik biva obavesten.
+     * 
+     * @param path Skladiste
+     * @param name naziv fajla  
+     * @return void
+     */
+    public abstract void prevName(String path,String name);
     
     /**
      * Ova metoda se koristi za skidanje
      * fajla ili direktorijuma, sa
      * nekog skladista
      * 
-     * @param putanja do fajla ili direktorijuma
+     * @param path putanja do fajla ili direktorijuma
      * @return void
      */
     public abstract void download(String path);
@@ -125,25 +143,49 @@ public abstract class Storage{
     
     
     /**
-     * Ova metoda se koristi za kreiranje
+     * Ova metoda se koristi za kreiranje vise 
      * foldera na nekoj putanji.
      * 
-     * @param putanja
+     * @param path Putanja skladista
+     * @param name Naziv foldera
+     * @param number broj foldera
+     * 
      * @return void
      */
     public abstract void createFolders(String path, String name, String number);
     
- 
+    /**
+     * Ova metoda se koristi za kreiranje jednog 
+     * foldera na nekoj putanji.
+     * 
+     * @param path Putanja skladista
+     * @param name Naziv foldera
+     * 
+     * @return void
+     */
     public void createFolder(String path, String name) {
     	
     	createFolders(path, name, "1");
     	
     }
-   // public abstract <T> List<T> findAll(String collection, Class<T> type);
+    /**
+     * Ova metoda se koristi za kreiranje 
+     * samog skladista.
+     * 
+     * @param storagePath Putanja skladista
+     * @param user Korisnik kreator,superuser
+     * 
+     * @return void
+     */
+      public abstract void initialise(User user, String storagePath);
 
-       public abstract void initialise(User user, String storagePath);
-
-       
+      /**
+       * Metoda koja se koristi za kreiranje podataka o 
+       * konfiguraciji u skladistu.
+       * @param user Korisnik 
+       * 
+       * @return void
+       */ 
 	public void createConfigFile(User user) {
 		Config config = new Config (this,user);
 		Scanner sc = new Scanner(System.in);
@@ -163,7 +205,14 @@ public abstract class Storage{
 		this.cfg=config;
 		System.out.println("Zavrsena konfiguracija skladista.");
 	}
-	
+    /**
+     * Ova metoda proverava uslove iz konfiguracije.
+     * 
+     * @param path Putanja skladista
+     * @param name Naziv ekstenzija
+     * 
+     * @return void
+     */
 	public boolean check(String path, String name){
 		File f = new File(path);
 		if (f.exists()) {
@@ -178,7 +227,7 @@ public abstract class Storage{
 		}
 	}
     /**
-     * Ova metoda se koristi za postavljanje
+     * Ova metoda se koristi za proveru
      * maksimalne velicine skladista u njegovoj konfiguraciji.
      * 
      * @param size Nova velicina skladista
@@ -201,6 +250,13 @@ public abstract class Storage{
 	public void setCfg(Config cfg) {
 		this.cfg = cfg;
 	}
+    /**
+     * Ova metoda se koristi za proveru
+     * maksimalne kolicine fajlova skladista
+     *  u njegovoj konfiguraciji.
+     * 
+     * @return void
+     */
 	public boolean FilesLimit() {
 		File f=new File(StoragePath);
 		if(f.exists()) {
@@ -252,7 +308,13 @@ public abstract class Storage{
     	getUsers().add(user);
     	JSONSave(getUsers());
     }
-    
+    /**
+     * Metoda koja se koristi za kreiranje podataka o 
+     * korisnicima u skladistu.
+     * 
+     * @param users Korisnici koji se dodaju
+     * @return void
+     */
     public void JSONSave(ArrayList<User> users) {
         JsonArray jsonArray = new JsonArray();
         for (int i = 0;i < getUsers().size() ; i++) {
@@ -276,7 +338,13 @@ public abstract class Storage{
 
         }
     }
-        
+    /**
+     * Metoda za kreiranje konfiguracionog fajla
+     * u skladistu.
+     * 
+     * @param config Konfiguracija za koju se pravi fajl
+     * @return void
+     */
         public void JSONSaveConfig(Config config) {
             JsonArray jsonArray = new JsonArray();
            
@@ -354,6 +422,7 @@ public abstract class Storage{
 		}
     	}
 	}
+
     public User getConnectedUser() {
 		return connectedUser;
 	}
