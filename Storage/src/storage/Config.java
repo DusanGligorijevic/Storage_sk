@@ -7,6 +7,7 @@ public class Config {
 	private byte size;
 	private int numberOfFiles;
 	private User user;
+	//Not allowed extensions
 	private ArrayList<String> extensions=new ArrayList<String>();
 	
 
@@ -24,10 +25,10 @@ public class Config {
 		this.user = user;
 	}
 	
-	public Storage getStrage() {
+	public Storage getStorage() {
 		return storage;
 	}
-	public void setStrage(Storage strage) {
+	public void setStorage(Storage strage) {
 		this.storage = strage;
 	}
 	public byte getSize() {
@@ -35,6 +36,7 @@ public class Config {
 	}
 	public void setSize(byte size) {
 		this.size = size;
+		
 	}
 	public int getNumberOfFiles() {
 		return numberOfFiles;

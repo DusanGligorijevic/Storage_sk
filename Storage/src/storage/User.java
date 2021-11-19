@@ -18,7 +18,7 @@ public class User {
 		this.privileges = new HashMap<Permissions, Boolean>();
 	}
 	
-	public void createUser() {
+	public User createUser() {
 		/*
 		if(!Storage.getInstance().getConnectedUser().getPrivileges().get(Permissions.create)) {
 			System.out.println("Nije ulogovan admin. Korisnik "+ Storage.getInstance().getConnectedUser()+
@@ -76,9 +76,9 @@ public class User {
 				break;
 			}
 		}
-		//Storage.getInstance().addUser(user);
-		System.out.println("Uspesno ste dodali korisnika!");
 		
+		System.out.println("Uspesno ste dodali korisnika!");
+		return user;
 	}
 
 	public String getUsername() {

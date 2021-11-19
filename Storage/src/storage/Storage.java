@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
@@ -29,7 +30,7 @@ import java.awt.image.BufferedImage;
 
 public abstract class Storage{
 	private User connectedUser;
-	public static final String  StoragePath="C:\\Users\\38160\\Desktop\\Storage";
+	public  String  StoragePath;
 
 	private ArrayList<User> users = new ArrayList<User>();
 	private Config cfg;
@@ -140,38 +141,41 @@ public abstract class Storage{
     }
    // public abstract <T> List<T> findAll(String collection, Class<T> type);
 
-       public void initialise(User user) {
-    	
-    	System.out.println("Korisnik" + user + "  pokusava da kreira skladiste...");
-    	
-    	if(user.getPrivileges().get(Permissions.create)) {
-    		
-    		//Instantiate the File class   
-            File storage = new File(StoragePath);  
-            //Creating a folder using mkdir() method  
-            boolean bool = storage.mkdir();  
-            if(bool){  
-               System.out.println("Skladiste je uspesno kreirano!");  
-               createConfigFile(user);
-            }else{  
-               System.out.println("Greska pri kreiranju skladista!");  
-            }  
-    	}else
-    	System.out.println("Korisnik nema dozvolu da kreira skladiste!");
-    	
-    	System.out.println("Uspesno logovanje!");
-  
-    }
+       public abstract void initialise(User user, String storagePath);
 
        
 	public void createConfigFile(User user) {
 		Config config = new Config (this,user);
-		config.setNumberOfFiles(100);
-		config.setSize((byte)30000000);
-		config.setStrage(this);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Unesite broj dozvoljenih fajlova u skladistu.");
+		config.setNumberOfFiles(Integer.parseInt(sc.nextLine()));
+		System.out.println("Unesite maksimalnu velicinu skaldista.");
+		config.setSize((byte)Integer.parseInt(sc.nextLine()));
+		while(true) {
+			System.out.println("Unesite tip fajla koji ne moze biti dodat. Kada zavrsite prtisnite 0.");
+			config.getExtensions().add(sc.nextLine());
+			if(sc.nextLine().contentEquals("0"))
+				break;
+			
+		}
+		config.setStorage(this);
 		JSONSaveConfig(config);
 		this.cfg=config;
-		
+		System.out.println("Zavrsena konfiguracija skladista.");
+	}
+	
+	public boolean check(String path, String name){
+		File f = new File(path);
+		if (f.exists()) {
+			if(!checkMaxSize(f.getTotalSpace()) || !FilesLimit() || !extensionLimit(name)) {
+				return false;
+			}
+			System.out.println("Provera zavrsena uspesno.");
+			return true;
+		}else{
+			System.out.println("Greska1");
+			return false;
+		}
 	}
     /**
      * Ova metoda se koristi za postavljanje
@@ -180,12 +184,14 @@ public abstract class Storage{
      * @param size Nova velicina skladista
      * @return void
      */
-	public void setMaxSize(int size) {
+	public boolean checkMaxSize(long size) {
 		File f=new File(StoragePath);
-		if(f.getTotalSpace()>(byte)size) {
-			System.out.println("Velicina skladista vec prevazilazi zadatu!");
+		System.out.println(f.getTotalSpace() +" "+ size);
+		if(6402476318721l> size) {
+			return true;
 		}else {
-			this.cfg.setSize((byte)size);
+			System.out.println("Nema dovoljno prostora u skladistu.");
+			return false;
 		}
 	}
 	
@@ -195,14 +201,22 @@ public abstract class Storage{
 	public void setCfg(Config cfg) {
 		this.cfg = cfg;
 	}
-	/*public void maxSizeLimit(Config c,int size) {
+	public boolean FilesLimit() {
 		File f=new File(StoragePath);
-		if(f.getTotalSpace()>(byte)size) {
-			System.out.println("Velicina skladista vec prevazilazi zadatu!");
+		if(f.exists()) {
+			System.out.println(f.listFiles().length +" "+getCfg().getNumberOfFiles());
+		if(f.listFiles().length < getCfg().getNumberOfFiles()) {
+			return true;
 		}else {
-			c.setSize((byte)size);
+			System.out.println("Skladiste sadrzi maksimalni broj fajlova.");
+			return false;
 		}
-	}*/
+	}else
+	{
+		System.out.println("Greska2");
+		return false;
+	}
+	}
     /**
      * Ova metoda se koristi za zabranu dodavanja novih
      * fajlova nekog tipa.Postavlja se u konfiguraciji 
@@ -210,34 +224,24 @@ public abstract class Storage{
      * @param s ekstenzija
      * @return void
      */
-	public void extensionLimit(String s) {
-		//TO-DO napraviti listu i u konfig fajlu
-		this.cfg.getExtensions().add(s);
-		System.out.println("Fajlovi sa "+s+"ekstenzijom vise ne mogu biti dodavani!");
-		
+	public boolean extensionLimit(String path) {
+			if(path.contains(".")) {
+				String[] parts = path.split("\\.");
+				System.out.println(getCfg().getExtensions());
+				for(String s: getCfg().getExtensions()) {
+					if(s.toString().contentEquals(parts[1])) {
+						System.out.println("Zabranjen fajl!");
+						return false;
+					}
+				}
+					return true;
+				}	
+			else {
+				System.out.println("Pogresan format putanje do fajla");
+				return false;
+			}	
 	}
-    /**
-     * Ovam metodom se postavlja maksimalni broj fajlova koji se 
-     * mogu dodati u neko skladiste.
-     * 
-     * @param num Novi maksimalni broj fajlova
-     * @return void
-     */
-	public void fileAmountLimit(int num) {
-		File f=new File(StoragePath);
-		File [] prevFiles=f.listFiles();
-		int cnt=0;
-		for(File file:prevFiles) {
-			cnt++;
-		}
-		if(cnt>num) {
-			System.out.println("Broj fajlova vec prevazilazi zadati!");
-
-		}else {
-			this.cfg.setNumberOfFiles(num);
-		}
-		
-	}
+ 
     /**
      * Metoda koja se koristi za dodavanje korisnika u skladiste.
      * 
@@ -246,7 +250,7 @@ public abstract class Storage{
      */
     public void addUser(User user) {
     	getUsers().add(user);
-    	
+    	JSONSave(getUsers());
     }
     
     public void JSONSave(ArrayList<User> users) {
@@ -263,6 +267,14 @@ public abstract class Storage{
             obj.add("User"+i, objItem);
             jsonArray.add(obj);
         }
+        try (FileWriter file = new FileWriter(StoragePath+"\\Users.json")) {
+            file.write(jsonArray.toString());
+            System.out.println("Successfully Copied JSON Object Config to File...");
+            System.out.println("\nJSON Object config: " + jsonArray);
+        } catch(Exception e){
+            System.out.println(e);
+
+        }
     }
         
         public void JSONSaveConfig(Config config) {
@@ -273,7 +285,7 @@ public abstract class Storage{
                 objItem.addProperty("size ", config.getSize());
                 objItem.addProperty(" numberOfFiles ",  config.getNumberOfFiles());
                 objItem.addProperty(" Admin ",  config.getUser().toString());
-                objItem.addProperty(" Storage ",  config.getStrage().toString());
+                objItem.addProperty(" Storage ",  config.getStorage().toString());
                 obj.add(" User ", objItem);
                 jsonArray.add(obj);
         
@@ -333,11 +345,14 @@ public abstract class Storage{
      * @param user Korisnik koji se povezuje
      * @return void
      */
-    public void connect(User user) {
-		if(getConnectedUser()==null && getUsers().contains(user)) {
-			setConnectedUser(user);
-			System.out.println("Korisnik "+ user.getUsername() + " je konektovan!");
-		}		
+    public void connect(String username, String password) {
+    	for(User u: getUsers()) {
+    		
+		if(getConnectedUser()==null && u.getUsername().contentEquals(username) && u.getPassword().contains(password)) {
+			setConnectedUser(u);
+			System.out.println("Korisnik "+ u.getUsername() + " je konektovan!");
+		}
+    	}
 	}
     public User getConnectedUser() {
 		return connectedUser;
