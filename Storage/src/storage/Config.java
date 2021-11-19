@@ -1,20 +1,34 @@
 package storage;
 
+import java.util.ArrayList;
+
 public class Config {
-	private Storage strage;
+	private Storage storage;
 	private byte size;
 	private int numberOfFiles;
 	private User user;
-	public Config(Storage strage, User user) {
+	private ArrayList<String> extensions=new ArrayList<String>();
+	
+
+	public ArrayList<String> getExtensions() {
+		return extensions;
+	}
+
+	public void setExtensions(ArrayList<String> extensions) {
+		this.extensions = extensions;
+	}
+
+	public Config(Storage storage, User user) {
 		super();
-		this.strage = strage;
+		this.storage = storage;
 		this.user = user;
 	}
+	
 	public Storage getStrage() {
-		return strage;
+		return storage;
 	}
 	public void setStrage(Storage strage) {
-		this.strage = strage;
+		this.storage = strage;
 	}
 	public byte getSize() {
 		return size;

@@ -3,6 +3,7 @@ package storage;
 
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,7 +32,6 @@ public abstract class Storage{
 	public static final String  StoragePath="C:\\Users\\38160\\Desktop\\Storage";
 
 	private ArrayList<User> users = new ArrayList<User>();
-	private ArrayList<String> extensions=new ArrayList<String>();
 	private Config cfg;
 
 
@@ -47,7 +47,12 @@ public abstract class Storage{
      */
     public abstract void createFiles(String path, String name, int numberOfFiles);
     
+
+    
     public void createFile(String path, String name) {
+		File f=new File(StoragePath);
+		
+    	
     	createFiles(path, name, 1);
     }
     
@@ -129,6 +134,7 @@ public abstract class Storage{
     
  
     public void createFolder(String path, String name) {
+    	
     	createFolders(path, name, "1");
     	
     }
@@ -157,10 +163,11 @@ public abstract class Storage{
   
     }
 
+       
 	public void createConfigFile(User user) {
 		Config config = new Config (this,user);
-		config.setNumberOfFiles(10);
-		config.setSize((byte)3000000);
+		config.setNumberOfFiles(100);
+		config.setSize((byte)30000000);
 		config.setStrage(this);
 		JSONSaveConfig(config);
 		this.cfg=config;
@@ -173,23 +180,29 @@ public abstract class Storage{
      * @param size Nova velicina skladista
      * @return void
      */
-	public void setMaxSize(Config c,int size) {
+	public void setMaxSize(int size) {
 		File f=new File(StoragePath);
 		if(f.getTotalSpace()>(byte)size) {
 			System.out.println("Velicina skladista vec prevazilazi zadatu!");
 		}else {
-			c.setSize((byte)size);
+			this.cfg.setSize((byte)size);
 		}
 	}
 	
-	public void maxSizeLimit(Config c,int size) {
+	public Config getCfg() {
+		return cfg;
+	}
+	public void setCfg(Config cfg) {
+		this.cfg = cfg;
+	}
+	/*public void maxSizeLimit(Config c,int size) {
 		File f=new File(StoragePath);
 		if(f.getTotalSpace()>(byte)size) {
 			System.out.println("Velicina skladista vec prevazilazi zadatu!");
 		}else {
 			c.setSize((byte)size);
 		}
-	}
+	}*/
     /**
      * Ova metoda se koristi za zabranu dodavanja novih
      * fajlova nekog tipa.Postavlja se u konfiguraciji 
@@ -199,7 +212,7 @@ public abstract class Storage{
      */
 	public void extensionLimit(String s) {
 		//TO-DO napraviti listu i u konfig fajlu
-		extensions.add(s);
+		this.cfg.getExtensions().add(s);
 		System.out.println("Fajlovi sa "+s+"ekstenzijom vise ne mogu biti dodavani!");
 		
 	}
@@ -210,7 +223,7 @@ public abstract class Storage{
      * @param num Novi maksimalni broj fajlova
      * @return void
      */
-	public void fileAmountLimit(Config cnf,int num) {
+	public void fileAmountLimit(int num) {
 		File f=new File(StoragePath);
 		File [] prevFiles=f.listFiles();
 		int cnt=0;
@@ -221,7 +234,7 @@ public abstract class Storage{
 			System.out.println("Broj fajlova vec prevazilazi zadati!");
 
 		}else {
-			cnf.setNumberOfFiles(num);
+			this.cfg.setNumberOfFiles(num);
 		}
 		
 	}
@@ -257,11 +270,11 @@ public abstract class Storage{
            
                 JsonObject obj = new JsonObject();
                 JsonObject objItem =  new JsonObject();
-                objItem.addProperty("size", config.getSize());
-                objItem.addProperty("numberOfFiles",  config.getNumberOfFiles());
-                objItem.addProperty("Admin",  config.getUser().toString());
-                objItem.addProperty("Storage",  config.getStrage().toString());
-                obj.add("User", objItem);
+                objItem.addProperty("size ", config.getSize());
+                objItem.addProperty(" numberOfFiles ",  config.getNumberOfFiles());
+                objItem.addProperty(" Admin ",  config.getUser().toString());
+                objItem.addProperty(" Storage ",  config.getStrage().toString());
+                obj.add(" User ", objItem);
                 jsonArray.add(obj);
         
         try (FileWriter file = new FileWriter(StoragePath+"\\Config.json")) {
@@ -291,13 +304,22 @@ public abstract class Storage{
     
     public void saveImage() {
     	try {
-    		
         	BufferedImage bi = ImageIO.read(new URL("https://www.cleverfiles.com/howto/wp-content/uploads/2018/03/minion.jpg"));
-        	System.out.println("idemooo");
-            File outputfile = new File(StoragePath+"\\saved.jpg");
-            System.out.println("idemooo222222");
-            ImageIO.write(bi, "png", outputfile);
-            System.out.println("idemooo33333");
+    	    ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+    	    ImageIO.write(bi, "png", tmp);
+    	    tmp.close();
+    	   	int b=tmp.size();
+    	   	File f = new File(StoragePath);
+    	   	if(this.getCfg().getSize()>((byte)b+(byte)(f.getTotalSpace()-f.getUsableSpace()))) {
+    	   		System.out.println("idemooo");
+                File outputfile = new File(StoragePath+"\\saved.jpg");
+                System.out.println("idemooo222222");
+                ImageIO.write(bi, "png", outputfile);
+                System.out.println("idemooo33333");
+    	   	}else {
+    	   		System.out.print("U skladistu nema dovoljno mesta!");
+    	   	}
+        	
             
         } catch (IOException e) {
             // handle exception
